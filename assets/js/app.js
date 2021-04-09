@@ -4,10 +4,10 @@ let svgWidth = 960;
 let svgHeight = 500;
 
 var margin = {
-    top:100,
-    right:100,
-    bottom:100,
-    left:100
+    top:75,
+    right:75,
+    bottom:75,
+    left:75
 };
 
 // Establish height and width
@@ -30,7 +30,7 @@ let chartGroup = svg.append("g")
 
 // Initial Paramaters
 let chosenXAxis = "poverty";
-let chosenYAxis = "healthcare";
+let chosenYAxis = "healthcareLow";
 
 // Retrieve data from CSV
 d3.csv("assets/data/data.csv").then(function(censusData, err){
@@ -58,18 +58,18 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
     // set xLinearScale
     // let xLinearScale = xScale(censusData, chosenXAxis);
     let xLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(censusData , d => d.poverty)])
+        .domain([8, d3.max(censusData , d => d.poverty) + 2])
         .range([0,width])
 
     // set yLinearScale
     // let yLinearScale = yScale(censusData, chosenYAxis);
     let yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(censusData, d => d.healthcare)])
+        .domain([4, d3.max(censusData, d => d.healthcare) + 2])
         .range([height, 0]);
 
 
     // create initial axis
-    let bottomAxis = d3.axisBottom(xLinearScale);
+    let bottomAxis = d3.axisBottom(xLinearScale).ticks(8);
     let leftAxis = d3.axisLeft(yLinearScale);
 
     // append x axis
@@ -98,36 +98,26 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         .enter()
         .append("circle")
         .attr("cx", d => xLinearScale(d.poverty)) // x&y for radius
-        .attr("cy", d => yLinearScale(d.healthcare))
-        .attr("r", "15")  // r = radius
+        .attr("cy", d => yLinearScale(d.healthcareLow))
+        .attr("r", "10")  // r = radius
         .attr("fill", "blue")
         .attr("stroke", "white")
-        .attr("opacity", ".5")
-    // // circlesGroup.append("text")
-    //     .attr("dx", d => 20)
-    //     .attr("stroke", "white")
-    //     .text(d => d.abbr);
+        .attr("opacity", ".75")
 
-
-
-
-    //     .attr({
-    //         "text-anchor": "middle",
-    //         "font-size": function(d) {
-    //           return d.r / ((d.r * 10) / 100);
-    //         },
-    //         "dy": function(d) {
-    //           return d.r / ((d.r * 25) / 100);
-    //         }
-    //       });
-
+    
+    circlesGroup.append("text")
+        .text(d => d.abbr)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "20px")
+        .attr("fill", "black")
+    
 
     // Setup tooltip
     let toolTip = d3.tip()
       .attr("class", "tooltip")
-      .offset([80, -60])
+      .offset([0, -20])
       .html(function(d) {
-        return (`${d.state}<br>Poverty(%): ${d.poverty}<br>Healthcare(%): ${d.healthcare}`);
+        return (`${d.state}<br>Poverty(%): ${d.poverty}<br>Lacks Healthcare(%): ${d.healthcareLow}`);
       }) 
 
     // Call tooltip in chartGroup
@@ -144,11 +134,11 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
     // Create axes labels
     chartGroup.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left + 45)
-        .attr("x", 0 - (height / 1.75))
-        .attr("dy", "1em")
+        .attr("y", 0 - margin.left + 15)
+        .attr("x", 0 - (height / 1.4))
+        .attr("dy", "2em")
         .attr("class", "axisText")
-        .text("Healthcare(%)")
+        .text("Lacks Healthcare(%)")
 
     chartGroup.append("text")
         .attr("transform", `translate(${width / 2.255}, ${height + 40})`)
