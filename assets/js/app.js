@@ -1,6 +1,6 @@
 // @TODO: YOUR CODE HERE!
 
-let svgWidth = 960;
+let svgWidth = 900;
 let svgHeight = 500;
 
 var margin = {
@@ -32,6 +32,7 @@ let chartGroup = svg.append("g")
 let chosenXAxis = "poverty";
 let chosenYAxis = "healthcareLow";
 
+
 // Retrieve data from CSV
 d3.csv("assets/data/data.csv").then(function(censusData, err){
     if (err) throw err;
@@ -55,50 +56,55 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         data.smokesHigh = parseInt(data.smokesHigh);
     });
 
+   
     // set xLinearScale
+
     // let xLinearScale = xScale(censusData, chosenXAxis);
     let xLinearScale = d3.scaleLinear()
-        .domain([8, d3.max(censusData , d => d.poverty) + 2])
-        .range([0,width])
+    .domain([d3.min(censusData, d => d[chosenXAxis]) *.5,
+    d3.max(censusData, d => d[chosenXAxis]) * 1.5])
+    .range([0, width]);
 
     // set yLinearScale
     // let yLinearScale = yScale(censusData, chosenYAxis);
     let yLinearScale = d3.scaleLinear()
-        .domain([4, d3.max(censusData, d => d.healthcare) + 2])
-        .range([height, 0]);
+    .domain([d3.min(censusData, d => d[chosenYAxis]) *.5,
+    d3.max(censusData, d => d[chosenYAxis]) * 1.5])
+    .range([height,0]);
+
 
 
     // create initial axis
-    let bottomAxis = d3.axisBottom(xLinearScale).ticks(8);
+    let bottomAxis = d3.axisBottom(xLinearScale);
     let leftAxis = d3.axisLeft(yLinearScale);
 
     // append x axis
-    // let xAxis = chartGroup.append("g")
-    //     .classed("x-axis", true)
-    //     .attr("transform", `translate(0,${height})`)
-    //     .call(bottomAxis);
-
-    chartGroup.append("g")
-        .attr("transform", `translate(0, ${height})`)
+    let xAxis = chartGroup.append("g")
+        .classed("x-axis", true)
+        .attr("transform", `translate(0,${height})`)
         .call(bottomAxis);
 
-    // append y axis
-    // let yAxis = chartGroup.append("g")
-    //     .classed("y-axis", true)
-    //     .attr("transform", `translate (${width}, 0)`)
-    //     .call(leftAxis);
+    // chartGroup.append("g")
+    //     .attr("transform", `translate(0, ${height})`)
+    //     .call(bottomAxis);
 
     // append y axis
-    chartGroup.append("g")
+    let yAxis = chartGroup.append("g")
+        .classed("y-axis", true)
+        .attr("transform", `translate (${width}, 0)`)
         .call(leftAxis);
+
+    // append y axis
+    // chartGroup.append("g")
+    //     .call(leftAxis);
 
     // Step 5: Create Circles
     let circlesGroup = chartGroup.selectAll("circle")
         .data(censusData)
         .enter()
         .append("circle")
-        .attr("cx", d => xLinearScale(d.poverty)) // x&y for radius
-        .attr("cy", d => yLinearScale(d.healthcareLow))
+        .attr("cx", d => xLinearScale(d[chosenXAxis])) // x&y for radius
+        .attr("cy", d => yLinearScale(d[chosenYAxis]))
         .attr("r", "10")  // r = radius
         .attr("fill", "blue")
         .attr("stroke", "white")
@@ -106,9 +112,10 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
 
     
     circlesGroup.append("text")
+        .attr("x", d => xLinearScale(d[chosenXAxis])-5)
         .text(d => d.abbr)
         .attr("font-family", "sans-serif")
-        .attr("font-size", "20px")
+        .attr("font-size", "8px")
         .attr("fill", "black")
     
 
@@ -117,7 +124,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
       .attr("class", "tooltip")
       .offset([0, -20])
       .html(function(d) {
-        return (`${d.state}<br>Poverty(%): ${d.poverty}<br>Lacks Healthcare(%): ${d.healthcareLow}`);
+        return (`${d.state}<br>Poverty(%): ${d.chosenXAxis}<br>Lacks Healthcare(%): ${d.chosenYAxis}`);
       }) 
 
     // Call tooltip in chartGroup
@@ -143,10 +150,11 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
     chartGroup.append("text")
         .attr("transform", `translate(${width / 2.255}, ${height + 40})`)
         .attr("class", "axisText")
-        .text("Poverty (%)")
+        .text("In Poverty (%)")
 
     console.log(censusData);
 }).catch(function(error) {
     console.log(error);
 })
+
 
