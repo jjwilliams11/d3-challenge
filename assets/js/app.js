@@ -99,24 +99,26 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
     //     .call(leftAxis);
 
     // Step 5: Create Circles
-    let circlesGroup = chartGroup.selectAll("circle")
+    let circlesGroup = chartGroup.selectAll("g circle")
         .data(censusData)
         .enter()
-        .append("circle")
+
+    circlesGroup.append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis])) // x&y for radius
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
-        .attr("r", "10")  // r = radius
+        .attr("r", "15")  // r = radius
         .attr("fill", "blue")
         .attr("stroke", "white")
         .attr("opacity", ".75")
 
     
     circlesGroup.append("text")
-        .attr("x", d => xLinearScale(d[chosenXAxis])-5)
+        .attr("dx", d => xLinearScale(d[chosenXAxis])-5) // x&y for radius
+        .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
         .text(d => d.abbr)
         .attr("font-family", "sans-serif")
-        .attr("font-size", "8px")
-        .attr("fill", "black")
+        .attr("font-size", ".5em")
+        .attr("fill", "white")
     
 
     // Setup tooltip
