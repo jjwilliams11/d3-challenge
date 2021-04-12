@@ -35,7 +35,7 @@ let chosenYAxis = "healthcareLow";
 
 
 
-// function used for updating x-scale var upon click on axis label
+// function to change X Axis Scale
 function xScale(censusData, chosenXAxis) {
     // create scales
     let xLinearScale = d3.scaleLinear()
@@ -47,7 +47,7 @@ function xScale(censusData, chosenXAxis) {
   
   }
 
-
+// function to change X Axis
 function changeXAxes(newXScale, xAxis) {
     let bottomAxis = d3.axisBottom(newXScale);
   
@@ -59,7 +59,7 @@ function changeXAxes(newXScale, xAxis) {
   }
 
 
-
+// function to change Y Axis Scale
 function yScale(censusData, chosenYAxis) {
     // create scales
     let yLinearScale = d3.scaleLinear()
@@ -71,6 +71,7 @@ function yScale(censusData, chosenYAxis) {
   
   }
 
+// function to change Y Axis
 function changeYAxes(newYScale, yAxis) {
     let leftAxis = d3.axisLeft(newYScale);
   
@@ -79,6 +80,36 @@ function changeYAxes(newYScale, yAxis) {
       .call(leftAxis);
   
     return yAxis;
+  }
+
+// function to change circles from X Axis
+function changeXCircles(circlesGroup, newXScale, chosenXAxis) {
+
+    circlesGroup.transition()
+        .duration(500)
+        .attr("cx", d => newXScale(d[chosenXAxis]))
+        // .attr("cy", d => newYScale(d[chosenYAxis]))
+      
+    circlesGroup.append("text")
+        .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
+        // .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
+
+    return circlesGroup;
+  }
+
+// function to change circles from Y Axis
+function changeYCircles(circlesGroup, newYScale, chosenYAxis) {
+
+    circlesGroup.transition()
+        .duration(500)
+        // .attr("cx", d => newXScale(d[chosenXAxis]))
+        .attr("cy", d => newYScale(d[chosenYAxis]))
+      
+    circlesGroup.append("text")
+        // .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
+        .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
+
+    return circlesGroup;
   }
 
 
@@ -156,7 +187,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         .attr("opacity", ".75")
     
     circlesGroup.append("text")
-        .attr("dx", d => xLinearScale(d[chosenXAxis])-5) // x&y for radius
+        .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
         .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
         .text(d => d.abbr)
         .attr("font-family", "sans-serif")
@@ -237,7 +268,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         xAxis = changeXAxes(xLinearScale, xAxis);
 
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        circlesGroup = changeXCircles(circlesGroup, xLinearScale, chosenXAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
@@ -329,7 +360,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         yAxis = changeYAxes(yLinearScale, yAxis);
 
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, yLinearScale, chosenYAxis);
+        circlesGroup = changeYCircles(circlesGroup, yLinearScale, chosenYAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
