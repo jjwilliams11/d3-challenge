@@ -219,13 +219,13 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         .attr("opacity", ".75")
         
     
-    // circlesGroup.append("text")
-    //     .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
-    //     .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
-    //     .text(d => d.abbr)
-    //     .attr("font-family", "sans-serif")
-    //     .attr("font-size", ".5em")
-    //     .attr("fill", "white");
+    circlesGroup.append("g")
+        .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
+        .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
+        .text(d => d.abbr)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", ".5em")
+        .attr("fill", "white");
     
     
     
