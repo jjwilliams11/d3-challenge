@@ -135,14 +135,25 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
 
     // Call tooltip in chartGroup
     chartGroup.call(toolTip);
-    // Create event listners fot tooltip
-    circlesGroup.on("mouseover", function(data){
+
+
+   // Create event listners on the circle for tooltip
+   circlesGroup.selectAll("circle").on("mouseover", function(data){
+    toolTip.show(data,this);
+    })
+        .on("mouseout", function(data,index){
+            toolTip.hide(data);
+    })
+    // Create event listners on the text for tooltip  
+    circlesGroup.selectAll("text").on("mouseover", function(data){
         toolTip.show(data,this);
     })
-    .on("mouseout", function(data,index){
-        toolTip.hide(data);
+        .on("mouseout", function(data,index){
+            toolTip.hide(data);
     })
    
 }).catch(function(error) {
     console.log(error);
 })
+
+

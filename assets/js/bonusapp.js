@@ -96,11 +96,11 @@ function changeYAxes(newYScale, yAxis) {
   }
 
 
-  function changeToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
+function changeToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
     let xlabel;
     let ylabel;
-  
+
     if (chosenXAxis === "poverty") {
         xlabel = "Poverty (%):";
     }
@@ -120,27 +120,35 @@ function changeYAxes(newYScale, yAxis) {
     else {
         ylabel = "Obesity (%):";
     }
-  
+
     let toolTip = d3.tip()
-      .attr("class", "tooltip")
-      .offset([0, -20])
-      .html(function(d) {
-          console.log(d.state)
-        return (`${d.state}<br>${xlabel}: ${d[chosenXAxis]}`);
-      });
-  
+        .attr("class", "tooltip")
+        .offset([0, -20])
+        .html(function(d) {
+        return (`${d.state}<br>
+            ${xlabel} ${d[chosenXAxis]}<br>
+            ${ylabel} ${d[chosenYAxis]}`);
+        });
+
     circlesGroup.call(toolTip);
-  
-    circlesGroup.on("mouseover", function(data) {
-      toolTip.show(data);
+
+    // Create event listners on the circle for tooltip
+    circlesGroup.on("mouseover", function(data){
+        toolTip.show(data,this);
     })
-      // onmouseout event
-      .on("mouseout", function(data, index) {
+    .on("mouseout", function(data,index){
         toolTip.hide(data);
-      });
-  
+    })
+    // Create event listners on the text for tooltip  
+    circlesGroup.selectAll("text").on("mouseover", function(data){
+        toolTip.show(data,this);
+    })
+    .on("mouseout", function(data,index){
+        toolTip.hide(data);
+    })
+
     return circlesGroup;
-  }
+}
 
 // function to change circles from Y Axis
 function changeYCircles(circlesGroup, newYScale, chosenYAxis) {
@@ -219,41 +227,13 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         .attr("opacity", ".75")
         
     
-    circlesGroup.append("g")
-        .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
-        .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
-        .text(d => d.abbr)
-        .attr("font-family", "sans-serif")
-        .attr("font-size", ".5em")
-        .attr("fill", "white");
-    
-    
-    
-    // Setup tooltip
-    // let toolTip = d3.tip()
-    //   .attr("class", "tooltip")
-    //   .offset([0, -20])
-    //   .html(function(d) {
-    //     return (`${d.state}<br>Poverty(%): ${d[chosenXAxis]}<br>Lacks Healthcare(%): ${d[chosenYAxis]}`);
-    //   }) ;
-
-    // // Call tooltip in chartGroup
-    // chartGroup.call(toolTip);
-
-    // // Create event listners on the circle for tooltip
-    // circlesGroup.selectAll("circle").on("mouseover", function(data){
-    //     toolTip.show(data,this);
-    // })
-    // .on("mouseout", function(data,index){
-    //     toolTip.hide(data);
-    // })
-    // // Create event listners on the text for tooltip  
-    // circlesGroup.selectAll("text").on("mouseover", function(data){
-    //     toolTip.show(data,this);
-    // })
-    // .on("mouseout", function(data,index){
-    //     toolTip.hide(data);
-    // })
+    // circlesGroup.append("g")
+    //     .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
+    //     .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
+    //     .text(d => d.abbr)
+    //     .attr("font-family", "sans-serif")
+    //     .attr("font-size", ".5em")
+    //     .attr("fill", "white");
 
     
     // Estable X-axis labels and groups
