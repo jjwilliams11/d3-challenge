@@ -63,9 +63,7 @@ function changeXCircles(circlesGroup , newXScale, chosenXAxis) {
 
     circlesGroup.transition()
         .duration(500)
-        .attr("cx", d => newXScale(d[chosenXAxis]));
-      
-    circlesGroup.append("text")
+        .attr("cx", d => newXScale(d[chosenXAxis]))
         .attr("dx", d => newXScale(d[chosenXAxis])-5);
 
     return circlesGroup;
@@ -156,8 +154,6 @@ function changeYCircles(circlesGroup, newYScale, chosenYAxis) {
     circlesGroup.transition()
         .duration(500)
         .attr("cy", d => newYScale(d[chosenYAxis]))
-      
-    circlesGroup.append("text")
         .attr("dy", d => newYScale(d[chosenYAxis])+3)
 
     return circlesGroup;
@@ -228,9 +224,9 @@ d3.csv("assets/data/data.csv").then(function(censusData, err){
         
     
     circlesGroup.append("text")
+        .text(d => d.abbr)
         .attr("dx", d => xLinearScale(d[chosenXAxis])-5)
         .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
-        .text(d => d.abbr)
         .attr("font-family", "sans-serif")
         .attr("font-size", ".5em")
         .attr("fill", "white");
